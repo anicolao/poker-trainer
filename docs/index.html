@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Preflop Poker Quiz</title>
+    <style>
+        /* --- Basic Setup --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        h1, h2, h3 {
+            color: #1a1a1a;
+            margin-top: 0;
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5em;
+            color: #d9534f;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            color: #0275d8;
+        }
+
+        /* --- Question & Answer Styling --- */
+        .question-scenario {
+            background-color: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-family: "Courier New", Courier, monospace;
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 1.25em;
+            margin-bottom: 15px;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option-item {
+            margin-bottom: 12px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .option-item:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .option-item label {
+            display: block;
+            cursor: pointer;
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        /* --- Textareas & Buttons --- */
+        textarea {
+            width: 98%;
+            min-height: 80px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 5px;
+            font-family: inherit;
+        }
+
+        button {
+            display: inline-block;
+            background-color: #5cb85c;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #4a9d4a;
+        }
+        
+        button#btn-print, button#btn-restart {
+            background-color: #0275d8;
+            margin-right: 10px;
+        }
+        button#btn-print:hover, button#btn-restart:hover {
+            background-color: #025aa5;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        /* --- Reveal Sections --- */
+        .reveal-box {
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            border: 1px solid;
+        }
+
+        #gemini-answer {
+            background-color: #e6f7ff;
+            border-color: #b3e0ff;
+        }
+        
+        #correct-answer {
+            background-color: #e6ffed;
+            border-color: #b3ffcb;
+        }
+
+        .reveal-box h3 {
+            margin-top: 0;
+            color: #31708f;
+        }
+        
+        #correct-answer h3 {
+            color: #3c763d;
+        }
+
+        .reasoning-text {
+            font-style: italic;
+            color: #555;
+            padding-left: 15px;
+            border-left: 3px solid #ddd;
+        }
+
+        /* --- Summary Page --- */
+        #summary-score {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+        
+        .score-correct {
+            color: #3c763d;
+        }
+        
+        .score-total {
+            color: #555;
+        }
+
+        .summary-item {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px dashed #eee;
+        }
+
+        .summary-answer {
+            font-weight: bold;
+            padding-left: 10px;
+        }
+        
+        .summary-notes {
+            background-color: #fffbef;
+            padding: 10px;
+            border: 1px dashed #e0e0e0;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        .summary-correct {
+            color: #3c763d;
+        }
+        
+        .summary-incorrect {
+            color: #d9534f;
+        }
+        
+        .summary-gemini {
+            color: #0275d8;
+        }
+
+        /* --- Print Styles --- */
+        @media print {
+            body {
+                background-color: #ffffff;
+                font-size: 12pt;
+                padding: 0;
+                margin: 0;
+            }
+            .container {
+                box-shadow: none;
+                border: none;
+                margin: 0;
+                padding: 0;
+                max-width: 100%;
+            }
+            #quiz-container, #summary-buttons {
+                display: none;
+            }
+            #summary-page {
+                display: block;
+            }
+            #summary-score {
+                text-align: left;
+            }
+            .summary-item {
+                border-bottom: 1px solid #ccc;
+                page-break-inside: avoid;
+            }
+            .summary-notes {
+                background-color: #f9f9f9;
+                border: 1px solid #eee;
+            }
+            h1, h2 {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="quiz-container">
+        <h1>Advanced Preflop Poker Quiz</h1>
+        <div id="question-area">
+            </div>
+
+        <div id="step-1">
+            <label for="user-reasoning"><strong>Your Reasoning:</strong> (Optional)</label>
+            <textarea id="user-reasoning" placeholder="Why did you pick this answer?"></textarea>
+            <button id="btn-submit">Submit Answer</button>
+        </div>
+
+        <div id="step-2" class="hidden">
+            <div id="gemini-answer" class="reveal-box">
+                <h3>Gemini's Initial Answer</h3>
+                <p><strong>Answer:</strong> <span id="gemini-answer-text"></span></p>
+                <p><strong>Gemini's Original Reasoning:</strong></p>
+                <div id="gemini-reasoning" class="reasoning-text"></div>
+            </div>
+            <label for="user-change-mind"><strong>Did this change your mind?</strong> (Optional)</label>
+            <textarea id="user-change-mind" placeholder="Why or why not?"></textarea>
+            <button id="btn-reveal-correct">Show Correct Answer</button>
+        </div>
+
+        <div id="step-3" class="hidden">
+            <div id="correct-answer" class="reveal-box">
+                <h3>Quiz's Correct Answer</h3>
+                <p><strong>Answer:</strong> <span id="correct-answer-text"></span></p>
+                <p><strong>Quiz's Explanation:</strong></p>
+                <div id="correct-reasoning" class="reasoning-text"></div>
+            </div>
+            <label for="user-convinced"><strong>Are you convinced?</strong> (Optional)</label>
+            <textarea id="user-convinced" placeholder="What's your final takeaway from this question?"></textarea>
+            <button id="btn-next">Next Question</button>
+        </div>
+    </div>
+    
+    <div class="container hidden" id="summary-page">
+        <h1>Quiz Summary</h1>
+        <h2 id="summary-score"></h2> <div id="summary-buttons">
+            <button id="btn-print" onclick="window.print()">Print Summary</button>
+            <button id="btn-restart" onclick="location.reload()">Start Over</button>
+        </div>
+        <div id="summary-content">
+            </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                id: 1,
+                scenario: "True or False:",
+                question: "You should never limp preflop.",
+                options: [
+                    { value: "True", text: "True" },
+                    { value: "False", text: "False" }
+                ],
+                geminiAnswer: "False",
+                geminiReasoning: `<p>This is a classic "trick" question. For 99% of players, the spirit is TRUE. Open-limping is a weak, losing play. However, the word "never" makes it technically FALSE. GTO solvers show small, mixed limping ranges (esp. from the SB) can be part of a balanced strategy.</p>`,
+                correctAnswer: "False",
+                correctReasoning: `<p>It is acceptable to limp behind other players who have limped... On the other hand, limping as the first person to enter the pot (a.k.a., "open-limping") is almost never better than raising or folding. The only exceptions are open-limping from the small blind and open-limping when you have a specific read on a player behind, both of which are <strong>sometimes</strong> fine.</p>`
+            },
+            {
+                id: 2,
+                scenario: "$0.50/$1 6-Max on PokerStars. $100 Effective Stacks.<br>Hero is on the Button<br>Cutoff raises to $2.5. Hero...",
+                question: "Which hand should Hero 3-bet for value most often?",
+                options: [
+                    { value: "AQs", text: "A♣ Q♣ (Ace-Queen Suited)" },
+                    { value: "88", text: "8♦ 8♣ (Pocket Eights)" },
+                    { value: "KQs", text: "K♣ Q♣ (King-Queen Suited)" }
+                ],
+                geminiAnswer: "AQs",
+                geminiReasoning: `<p>This is the strongest hand of the three. It's a premium 3-bet for value that dominates a large part of the opponent's opening/calling range. 88 is a clear call to set-mine in position. KQs is a "mix" (sometimes 3-bet, sometimes call).</p>`,
+                correctAnswer: "AQs",
+                correctReasoning: `<p>AQs will tie or dominate all the Ax hands that the cutoff would call with... so it stands to win a bigger pot on average than 88 or KQs. Note that KQs is also a good hand to frequently 3-bet... but AQs is just a bit better. Additionally, though 88 will usually play better as a call, 3-betting for value is a good adjustment to make if the cutoff open-raises and/or calls 3-bets too frequently.</p>`
+            },
+            {
+                id: 3,
+                scenario: "Fill in the blank:",
+                question: "You should open raise to a ___ size when playing a game with antes, compared to a non-ante game.",
+                options: [
+                    { value: "Smaller", text: "Smaller" },
+                    { value: "Larger", text: "Larger" }
+                ],
+                geminiAnswer: "Smaller",
+                geminiReasoning: `<p>Because the pot is already big from the antes, you get a better risk/reward on a steal. You can risk less (a 2.2x raise) to win more (the blinds + antes). This is a very common strategy, especially for opening in late position.</p>`,
+                correctAnswer: "Larger",
+                correctReasoning: `<p>Using a larger size prevents the other players, especially the player in the big blind, from being offered great pot odds to call or 3-bet. Also, a larger size will help you avoid playing multi-way pots as the preflop raiser.</p>`
+            },
+            {
+                id: 4,
+                scenario: "",
+                question: "Which of these situations warrants the loosest preflop raising ranges?",
+                options: [
+                    { value: "Cash", text: "Cash game, 100 big blinds deep." },
+                    { value: "Ante", text: "Tournament, 50 big blinds deep, with antes in play." },
+                    { value: "No Ante", text: "Tournament, 50 big blinds deep, without antes." }
+                ],
+                geminiAnswer: "Ante",
+                geminiReasoning: `<p>The "dead money" from the antes is the key factor. The pot is already inflated, creating a massive incentive to steal it. This warrants a much wider (looser) opening range compared to a non-ante game.</p>`,
+                correctAnswer: "Ante",
+                correctReasoning: `<p>With antes in play, there is more dead money in the pot to go after -- usually around one extra big blind... So, you get a better price on your raise since you risk roughly the same amount to win a bigger pot.</p>`
+            },
+            {
+                id: 5,
+                scenario: "$0.25/$0.50 6-Max Online. $50 Effective Stacks.<br>Hero is in the BB<br>Cutoff raises to $1.50. SB calls. Hero...",
+                question: "Which hand should Hero 3-bet squeeze with most often?",
+                options: [
+                    { value: "44", text: "4♠ 4♥ (Pocket Fours)" },
+                    { value: "A2s", text: "A♥ 2♥ (Ace-Two Suited)" },
+                    { value: "A9s", text: "A♥ 9♥ (Ace-Nine Suited)" }
+                ],
+                geminiAnswer: "A9s",
+                geminiReasoning: `<p>I chose A9s because it has the key Ace-blocker (reducing combos of AA/AK) plus better high-card value than A2s, making it a stronger, more playable 3-bet. 44 is a clear call or fold.</p>`,
+                correctAnswer: "A2s",
+                correctReasoning: `<p>Both A2s and A9s block the strongest hands... but A2s is a better squeeze because it has better postflop playability and will force folds from more dominating Ax hands than A9. 44 should almost never be 3-bet, here. It is a perfect hand to call... A9s should be called as well.</p>`
+            },
+            {
+                id: 6,
+                scenario: "Fill in the blank:",
+                question: "When your stack decreases from 100bb to 40bb, you should usually 3-bet with a ___ range of hands.",
+                options: [
+                    { value: "Merged", text: "Merged (a range composed of only strong hands and medium-strong hands)" },
+                    { value: "Polarized", text: "Polarized (a range with both strong hands and bluffs)" }
+                ],
+                geminiAnswer: "Merged",
+                geminiReasoning: `<p>My logic was that at 40bb, you can't "afford" to 3-bet bluff with A5s, because a 4-bet shove costs too much. Therefore, your range "merges" to only include hands you are happy to get all-in with (TT+, AQs+).</p>`,
+                correctAnswer: "Polarized",
+                correctReasoning: `<p>With the threat of a 4-bet shove looming, you should only 3-bet value hands that can comfortably call a shove, and bluffs that can easily fold to a shove. A linear (merged) 3-bet range would contain hands like QJs and AJo, which <strong>really</strong> do not want to face a shove.</p>`
+            },
+            {
+                id: 7,
+                scenario: "$5/$10 Live. $1,200 Effective Stacks.<br>Hero is on the Button<br>HiJack raises to $30. Hero...",
+                question: "Which hand should Hero flat call with most often?",
+                options: [
+                    { value: "76s", text: "7♠ 6♠ (Seven-Six Suited)" },
+                    { value: "QJs", text: "Q♠ J♠ (Queen-Jack Suited)" },
+                    { value: "A5s", text: "A♠ 5♠ (Ace-Five Suited)" }
+                ],
+                geminiAnswer: "76s",
+                geminiReasoning: `<p>My logic was that 76s is the quintessential speculative flat-call for implied odds. I viewed A5s and QJs as prime 3-bet candidates (one as a bluff, one for thin value).</p>`,
+                correctAnswer: "QJs",
+                correctReasoning: `<p>QJs is a strong enough hand with which to flat call... The Hijack's continue range versus a 3-bet will contain many hands that dominate QJs and only a few worse ones, so 3-betting would be a mistake. 76s and A5s benefit from making better hands fold with a 3-bet... they have good equity and playability postflop versus a strong calling range. Also, they can also fold out better hands...</p>`
+            },
+            {
+                id: 8,
+                scenario: "(Assume 50bb deep with antes in play.)",
+                question: "When deciding which preflop raise size to use in tournaments, which of these factors is most important to consider?",
+                options: [
+                    { value: "Position", text: "Your position." },
+                    { value: "BB Tendencies", text: "The tendencies of the player in the big blind." },
+                    { value: "Hand", text: "Your hand." }
+                ],
+                geminiAnswer: "BB Tendencies",
+                geminiReasoning: `<p>Adjusting your *size* based on opponent tendencies is a key exploitative play. If the BB is tight, raise smaller. If the BB is loose, raise larger to get value and deny them odds. Your hand and position should determine your *range*, not your sizing (to remain balanced).</p>`,
+                correctAnswer: "BB Tendencies",
+                correctReasoning: `<p>If the player in the big blind is loose, it makes sense to use a larger raise size to worsen their pot odds... Conversely, if the player in the big blind is very tight, it might be worth using a smaller raise size to improve your own pot odds... Generally, you shouldn't vary your raise sizes based on position... Varying your raise size based on your hand is almost never a good idea...</p>`
+            },
+            {
+                id: 9,
+                scenario: "$1/$2 online with $200 effective stacks.<br>You open-raise to $5 from the Button and the SB 3-bets to $19... you have no specific reads.",
+                question: "Which hand should you 4-bet with most often?",
+                options: [
+                    { value: "AJo", text: "A♠ J♦ (Ace-Jack Offsuit)" },
+                    { value: "64s", text: "6♦ 4♦ (Six-Four Suited)" },
+                    { value: "A4s", text: "A♠ 4♠ (Ace-Four Suited)" }
+                ],
+                geminiAnswer: "A4s",
+                geminiReasoning: `<p>AJo is a clear *call* (too strong to bluff). 64s is a clear *fold* (no blockers). A4s is the perfect 4-bet bluff because it's *too weak to call* but has the **critical Ace-blocker**, which makes it less likely your opponent has AA or AK.</p>`,
+                correctAnswer: "A4s",
+                correctReasoning: `<p>A4s is a very good 4-bet candidate... It blocks the top part of villain's calling range (AQ, AJs, ATs) and 5-bet range (AA, AK). When called, it still has a lot of equity and playability... 64s is a somewhat reasonable hand to 4-bet, but it doesn't have as much going for it as A4. ... AJo is a perfect hand to flat call the 3-bet with.</p>`
+            },
+            {
+                id: 10,
+                scenario: "$109 Online Tournament... Hero is in the BB.<br>Cutoff raises to 2,200 (a min-raise).<br>Reads: Cutoff has a slightly higher than average fold to 3-bet frequency.",
+                question: "Which of these hands should Hero 3-bet bluff with most often?",
+                options: [
+                    { value: "64s", text: "6♦ 4♦ (Six-Four Suited)" },
+                    { value: "87o", text: "8♠ 7♣ (Eight-Seven Offsuit)" },
+                    { value: "A2o", text: "A♦ 2♣ (Ace-Two Offsuit)" }
+                ],
+                geminiAnswer: "A2o",
+                geminiReasoning: `<p>My reasoning was based on the GTO-shortcut: the **Ace blocker**. Holding an Ace makes it less likely the opponent has AA or AK, making it the "go-to" 3-bet bluff.</p>`,
+                correctAnswer: "64s",
+                correctReasoning: `<p>All 3 of these hands are getting a good enough price that they can profitably call, but 64s will have the most playability and be dominated least often in a 3-bet pot.</p>`
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let userData = [];
+
+        // --- DOM Elements ---
+        const quizContainer = document.getElementById('quiz-container');
+        const questionArea = document.getElementById('question-area');
+        
+        const step1 = document.getElementById('step-1');
+        const userReasoning = document.getElementById('user-reasoning');
+        const btnSubmit = document.getElementById('btn-submit');
+        
+        const step2 = document.getElementById('step-2');
+        const geminiAnswerText = document.getElementById('gemini-answer-text');
+        const geminiReasoning = document.getElementById('gemini-reasoning');
+        const userChangeMind = document.getElementById('user-change-mind');
+        const btnRevealCorrect = document.getElementById('btn-reveal-correct');
+
+        const step3 = document.getElementById('step-3');
+        const correctAnswerText = document.getElementById('correct-answer-text');
+        const correctReasoning = document.getElementById('correct-reasoning');
+        const userConvinced = document.getElementById('user-convinced');
+        const btnNext = document.getElementById('btn-next');
+
+        const summaryPage = document.getElementById('summary-page');
+        const summaryContent = document.getElementById('summary-content');
+
+        // --- Event Listeners ---
+        btnSubmit.addEventListener('click', handleSubmit);
+        btnRevealCorrect.addEventListener('click', handleRevealCorrect);
+        btnNext.addEventListener('click', handleNext);
+
+        // --- Functions ---
+        function loadQuestion(index) {
+            // Reset UI
+            step1.classList.remove('hidden');
+            step2.classList.add('hidden');
+            step3.classList.add('hidden');
+            userReasoning.value = '';
+            userChangeMind.value = '';
+            userConvinced.value = '';
+            
+            const q = quizData[index];
+            let optionsHtml = '';
+            q.options.forEach((option, i) => {
+                optionsHtml += `
+                    <li class="option-item">
+                        <label>
+                            <input type="radio" name="option" value="${option.value}">
+                            ${option.text}
+                        </label>
+                    </li>
+                `;
+            });
+
+            questionArea.innerHTML = `
+                <h2>Question ${q.id} of ${quizData.length}</h2>
+                <div class="question-scenario">${q.scenario}</div>
+                <p class="question-text">${q.question}</p>
+                <ul class="options-list">${optionsHtml}</ul>
+            `;
+            
+            btnNext.innerHTML = (index === quizData.length - 1) ? 'Show Summary' : 'Next Question';
+        }
+
+        function handleSubmit() {
+            const selected = document.querySelector('input[name="option"]:checked');
+            if (!selected) {
+                alert('Please select an answer.');
+                return;
+            }
+
+            const q = quizData[currentQuestionIndex];
+            
+            // Store data
+            const currentAnswer = {
+                question: q,
+                userAnswer: selected.value,
+                userReasoning: userReasoning.value,
+                userAnswerText: selected.parentElement.innerText.trim(),
+            };
+            userData.push(currentAnswer);
+
+            // Populate Step 2
+            geminiAnswerText.innerText = q.options.find(opt => opt.value === q.geminiAnswer)?.text || q.geminiAnswer;
+            geminiReasoning.innerHTML = q.geminiReasoning;
+
+            // Show Step 2
+            step1.classList.add('hidden');
+            step2.classList.remove('hidden');
+        }
+
+        function handleRevealCorrect() {
+            const q = quizData[currentQuestionIndex];
+
+            // Store data
+            userData[currentQuestionIndex].userChangeMind = userChangeMind.value;
+            
+            // Populate Step 3
+            correctAnswerText.innerText = q.options.find(opt => opt.value === q.correctAnswer)?.text || q.correctAnswer;
+            correctReasoning.innerHTML = q.correctReasoning;
+
+            // Show Step 3
+            step2.classList.add('hidden');
+            step3.classList.remove('hidden');
+        }
+
+        function handleNext() {
+            // Store data
+            userData[currentQuestionIndex].userConvinced = userConvinced.value;
+
+            // Move to next question or summary
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion(currentQuestionIndex);
+            } else {
+                showSummary();
+            }
+        }
+
+        function showSummary() {
+            quizContainer.classList.add('hidden');
+            summaryPage.classList.remove('hidden');
+            
+            let score = 0;
+            userData.forEach(data => {
+                if (data.userAnswer === data.question.correctAnswer) {
+                    score++;
+                }
+            });
+            const total = quizData.length;
+            
+            // Set the score text
+            const scoreElement = document.getElementById('summary-score');
+            scoreElement.innerHTML = `Your Score: <span class="score-correct">${score}</span><span class="score-total"> / ${total}</span>`;
+            
+            let summaryHtml = '';
+            userData.forEach((data, index) => {
+                const q = data.question;
+                
+                const userWasCorrect = data.userAnswer === q.correctAnswer;
+                const geminiWasCorrect = q.geminiAnswer === q.correctAnswer;
+                
+                summaryHtml += `
+                    <div class="summary-item">
+                        <h2>Question ${q.id}: ${q.question}</h2>
+                        <div class="question-scenario">${q.scenario}</div>
+                        
+                        <p>
+                            <span class="summary-answer ${userWasCorrect ? 'summary-correct' : 'summary-incorrect'}">
+                                <strong>Your Answer:</strong> ${data.userAnswerText} ${userWasCorrect ? '(Correct)' : '(Incorrect)'}
+                            </span>
+                        </p>
+                        <p>
+                            <span class="summary-answer ${geminiWasCorrect ? 'summary-correct' : 'summary-gemini'}">
+                                <strong>Gemini's Answer:</strong> ${q.options.find(opt => opt.value === q.geminiAnswer)?.text || q.geminiAnswer} ${geminiWasCorrect ? '(Correct)' : '(Incorrect)'}
+                            </span>
+                        </p>
+                        <p>
+                            <span class="summary-answer summary-correct">
+                                <strong>Correct Answer:</strong> ${q.options.find(opt => opt.value === q.correctAnswer)?.text || q.correctAnswer}
+                            </span>
+                        </p>
+                        
+                        <h3>Your Notes:</h3>
+                        <div class="summary-notes">
+                            <p><strong>Your initial reasoning:</strong><br>${data.userReasoning || '<em>No notes.</em>'}</p>
+                            <p><strong>Thoughts after seeing Gemini's answer:</strong><br>${data.userChangeMind || '<em>No notes.</em>'}</p>
+                            <p><strong>Final takeaway:</strong><br>${data.userConvinced || '<em>No notes.</em>'}</p>
+                        </div>
+                        
+                        <h3>Quiz Explanation:</h3>
+                        <div class="reasoning-text">${q.correctReasoning}</div>
+                    </div>
+                `;
+            });
+            
+            summaryContent.innerHTML = summaryHtml;
+        }
+
+        // --- Initialize ---
+        loadQuestion(0);
+
+    </script>
+</body>
+</html>
